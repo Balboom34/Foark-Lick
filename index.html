@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Click Counter</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            cursor: pointer;
+            user-select: none;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .cake {
+            position: absolute;
+            font-size: 3rem;
+            animation: fall linear infinite;
+            pointer-events: none;
+        }
+        
+        @keyframes fall {
+            0% {
+                top: -10%;
+                transform: translateX(0) rotate(0deg);
+            }
+            100% {
+                top: 110%;
+                transform: translateX(20px) rotate(360deg);
+            }
+        }
+        
+        .counter-container {
+            text-align: center;
+            color: white;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .counter-label {
+            font-size: 2rem;
+            font-weight: 300;
+            margin-bottom: 1rem;
+            opacity: 0.9;
+        }
+        
+        .counter-display {
+            font-size: 8rem;
+            font-weight: 700;
+            line-height: 1;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            transition: transform 0.1s ease;
+        }
+        
+        .counter-display.pop {
+            transform: scale(1.1);
+        }
+        
+        .reset-button {
+            margin-top: 3rem;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #667eea;
+            background: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .reset-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .reset-button:active {
+            transform: translateY(0);
+        }
+        
+        .instruction {
+            position: absolute;
+            bottom: 2rem;
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 300;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+    <div class="counter-container">
+        <div class="counter-label">How many cakes has Foark eaten</div>
+        <div class="counter-display" id="counter">0</div>
+        <button class="reset-button" id="resetBtn" onclick="event.stopPropagation(); resetCounter();">Reset</button>
+    </div>
+    
+    <div class="instruction">Click anywhere to count</div>
+    
+    <script>
+        let clickCount = 0;
+        const counterDisplay = document.getElementById('counter');
+        
+        // Create falling cakes
+        function createCake() {
+            const cake = document.createElement('div');
+            cake.className = 'cake';
+            cake.textContent = '🍰';
+            cake.style.left = Math.random() * 100 + '%';
+            cake.style.animationDuration = (Math.random() * 3 + 3) + 's';
+            cake.style.animationDelay = Math.random() * 2 + 's';
+            document.body.appendChild(cake);
+            
+            // Remove cake after animation
+            setTimeout(() => {
+                cake.remove();
+            }, 8000);
+        }
+        
+        // Create multiple cakes
+        for (let i = 0; i < 15; i++) {
+            createCake();
+        }
+        
+        // Continuously add new cakes
+        setInterval(createCake, 800);
+        
+        document.body.addEventListener('click', function(e) {
+            // Don't count clicks on the reset button
+            if (e.target.id === 'resetBtn') {
+                return;
+            }
+            
+            clickCount++;
+            counterDisplay.textContent = clickCount;
+            
+            // Add pop animation
+            counterDisplay.classList.add('pop');
+            setTimeout(() => {
+                counterDisplay.classList.remove('pop');
+            }, 100);
+        });
+        
+        function resetCounter() {
+            clickCount = 0;
+            counterDisplay.textContent = '0';
+        }
+    </script>
+</body>
+</html>
